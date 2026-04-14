@@ -256,6 +256,16 @@ function addMessage(text, isUser = false, shouldSave = true) {
 
 // --- Results Swiper Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.result-card').forEach((card) => {
+        card.addEventListener('mouseenter', () => {
+            card.classList.add('is-hovered');
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.classList.remove('is-hovered');
+        });
+    });
+
     const resultsSwiper = new Swiper('.results-swiper', {
         slidesPerView: 1,
         spaceBetween: 20,
@@ -288,4 +298,52 @@ document.addEventListener('DOMContentLoaded', () => {
             },
         },
     });
+
+    // --- Infinite Carousel: 4-at-a-time with seamless loop ---
+    (function () {
+        const track   = document.getElementById('marquee-track');
+        const prevBtn = document.getElementById('sliderPrev');
+        const nextBtn = document.getElementById('sliderNext');
+        if (!track || !prevBtn || !nextBtn) return;
+
+        const GAP_PX      = 16;   // 1rem
+        const CARDS_STEP  = 4;    // avança 4 por clique
+        let   currentIdx  = 0;
+
+        // --- Clone cards for infinite illusion ---
+        const originals = Array.from(track.querySelectorAll('.marquee-card'));
+        originals.forEach(c => track.appendChild(c.cloneNode(true)));
+        const totalCards = track.querySelectorAll('.marquee-card').length; // 12
+
+        function cardWidth() {
+            const c = track.querySelector('.marquee-card');
+            return c ? c.offsetWidth + GAP_PX : 0;
+        }
+
+        function moveTo(idx, animate = true) {
+            if (!animate) track.classList.add('no-transition');
+            track.style.transform = `translateX(-${idx * cardWidth()}px)`;
+            if (!animate) {
+                // force reflow then restore transition
+                void track.offsetWidth;
+                track.classList.remove('no-transition');
+            }
+            currentIdx = idx;
+        }
+
+        // After transition ends: if we're in the cloned zone, silently reset
+        track.addEventListener('transitionend', () => {
+            const half = originals.length; // 6
+            if (currentIdx >= half) {
+                moveTo(currentIdx - half, false);
+            } else if (currentIdx < 0) {
+                moveTo(currentIdx + half, false);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => moveTo(currentIdx + CARDS_STEP));
+        prevBtn.addEventListener('click', () => moveTo(currentIdx - CARDS_STEP));
+
+        window.addEventListener('resize', () => moveTo(currentIdx, false));
+    })();
 });

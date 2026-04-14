@@ -331,7 +331,6 @@ html.lenis {
 /* Marquee Animation */
 .marquee-container {
     overflow: hidden;
-    white-space: nowrap;
     width: 100%;
     background: var(--titanium);
     padding: 1.5rem 0;
@@ -340,8 +339,15 @@ html.lenis {
 }
 
 .marquee-content {
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    width: max-content;
     animation: marquee 30s linear infinite;
+    will-change: transform;
+}
+
+.marquee-content > span {
+    flex: 0 0 auto;
 }
 
 @keyframes marquee {
@@ -508,6 +514,97 @@ html.lenis {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+    gap: 1.75rem;
+    align-items: start;
+}
+
+.result-card {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.result-card:hover {
+    box-shadow: none;
+}
+
+.result-card-media {
+    aspect-ratio: 1 / 1;
+}
+
+.result-card-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    padding: 1.8rem;
+    background: linear-gradient(180deg, rgba(13, 27, 76, 0) 34%, rgba(18, 53, 140, 0.28) 62%, rgba(13, 27, 76, 0.96) 100%);
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.35s ease, transform 0.4s ease;
+    pointer-events: none;
+}
+
+.result-card-badges {
+    z-index: 3;
+}
+
+.result-card-copy {
+    transform: translateY(10px);
+    transition: transform 0.4s ease;
+}
+
+.result-card:hover .result-card-overlay,
+.result-card:focus-within .result-card-overlay,
+.result-card.is-hovered .result-card-overlay {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.result-card:hover .result-card-copy,
+.result-card:focus-within .result-card-copy,
+.result-card.is-hovered .result-card-copy {
+    transform: translateY(0);
+}
+
+.result-card-kicker {
+    display: block;
+    margin-bottom: 0.45rem;
+    color: #9DEAE4;
+    font-size: 0.58rem;
+    font-weight: 900;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+}
+
+.result-card-title {
+    margin: 0;
+    color: #FFFFFF;
+    font-family: var(--font-title);
+    font-size: 1.18rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+    .result-card-overlay {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .result-card-copy {
+        transform: translateY(0);
+    }
 }
 
 /* Review Cards */
